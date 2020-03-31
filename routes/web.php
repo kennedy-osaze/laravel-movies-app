@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'movies.index')->name('movies.index');
+
+Route::view('/movie', 'movies.show')->name('movies.show');
