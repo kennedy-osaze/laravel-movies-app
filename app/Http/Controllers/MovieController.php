@@ -3,36 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\TheMovieDbService;
 use Illuminate\Support\Facades\Http;
 
 class MovieController extends Controller
 {
+    private TheMovieDbService $movieDb;
+
+    public function __construct(TheMovieDbService $movieDb)
+    {
+        $this->movieDb = $movieDb;
+    }
+
     public function index()
     {
-        $popularMovies = Http::withToken(config('services.tmdb.token'))
-            ->get(config('services.tmdb.domain') . '/movie/popular')
-            ->json()['results'];
+        $popularMovies = $this->movieDb->getPopularMovies()['results'];
 
-        $genresArray = Http::withToken(config('services.tmdb.token'))
-            ->get(config('services.tmdb.domain') . '/genre/movie/list')
-            ->json()['genres'];
+        $nowPlayingMovies = $this->movieDb->getPlayingNowMovies()['results'];
 
-        $genres = collect($genresArray)->mapWithKeys(function ($genre) {
-            return [$genre['id'] => $genre['name']];
-        });
-
-        $nowPlayingMovies = Http::withToken(config('services.tmdb.token'))
-            ->get(config('services.tmdb.domain') . '/movie/now_playing')
-            ->json()['results'];
+        $genres = $this->movieDb->getGenres()['genres'];
 
         return view('movies.index', compact('popularMovies', 'genres', 'nowPlayingMovies'));
     }
 
-    public function show($id)
+    public function show(string $id)
     {
-        $movie = Http::withToken(config('services.tmdb.token'))
-            ->get(config('services.tmdb.domain') . "/movie/{$id}?append_to_response=credits,videos,images")
-            ->json();
+        $movie = $this->movieDb->getMovieDetails($id);
 
         return view('movies.show', compact('movie'));
     }
