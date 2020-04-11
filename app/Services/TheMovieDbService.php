@@ -74,6 +74,22 @@ class TheMovieDbService
     }
 
     /**
+     * Search the TMDB for a particularq uery movie
+     *
+     * @param string $query
+     *
+     * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function searchMovie(string $query)
+    {
+        return $this->makeGetRequest('search/movie', [
+            'query' => $query
+        ]);
+    }
+
+    /**
      * Make a GET request to TMDB
      *
      * @param string $path

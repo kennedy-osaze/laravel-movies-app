@@ -17,9 +17,9 @@ class MovieController extends Controller
 
     public function index()
     {
-        $popularMovies = $this->movieDb->getPopularMovies()['results'];
+        $popularMovies = $this->movieDb->getPopularMovies();
 
-        $nowPlayingMovies = $this->movieDb->getPlayingNowMovies()['results'];
+        $nowPlayingMovies = $this->movieDb->getPlayingNowMovies();
 
         $genres = $this->movieDb->getGenres()['genres'];
 
