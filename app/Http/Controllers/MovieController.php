@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use App\Services\TheMovieDbService;
-use Illuminate\Support\Facades\Http;
+use App\ViewModels\MoviesViewModel;
+use App\ViewModels\SingleMovieViewModel;
 
 class MovieController extends Controller
 {
@@ -17,19 +18,18 @@ class MovieController extends Controller
 
     public function index()
     {
-        $popularMovies = $this->movieDb->getPopularMovies();
-
-        $nowPlayingMovies = $this->movieDb->getPlayingNowMovies();
-
-        $genres = $this->movieDb->getGenres()['genres'];
-
-        return view('movies.index', compact('popularMovies', 'genres', 'nowPlayingMovies'));
+        return view('movies.index', new MoviesViewModel(
+            Arr::get($this->movieDb->getPopularMovies(), 'results', []),
+            Arr::get($this->movieDb->getPlayingNowMovies(), 'results', []),
+            Arr::get($this->movieDb->getGenres(), 'genres', []),
+        ));
     }
 
     public function show(string $id)
     {
-        $movie = $this->movieDb->getMovieDetails($id);
-
-        return view('movies.show', compact('movie'));
+        return view(
+            'movies.show',
+            new SingleMovieViewModel($this->movieDb->getMovieDetails($id))
+        );
     }
 }

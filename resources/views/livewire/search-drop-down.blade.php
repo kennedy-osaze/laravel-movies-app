@@ -32,20 +32,17 @@
             x-show.transition.opacity="open"
             @keydown.escape.window="open = false"
         >
-            @if (isset($searchedMovies['results']) && count($searchedMovies['results']) > 0)
+            @if (count($searchedMovies) > 0)
                 <ul>
-                    @foreach ($searchedMovies['results'] as $result)
+                    @foreach ($searchedMovies as $movie)
                         <li class="border-b border-gray-700">
                             <a
-                                href="{{ route('movies.show', $result['id']) }}"
+                                href="{{ route('movies.show', $movie['id']) }}"
                                 class="block hover:bg-gray-700 px-3 py-3 flex items-center"
                                 @if ($loop->iteration === 6) @keydown.tab="open = false" @endif
                             >
-                                @php
-                                    $poster_image = isset($result['poster_path']) ? 'https://image.tmdb.org/t/p/w92' . $result['poster_path'] : 'https://via.placeholder.com/50x75.jpg';
-                                @endphp
-                                <img src="{{ $poster_image }}" alt="{{ 'poster-' . Str::slug($result['title']) }}" class="w-8">
-                                <span class="ml-4">{{ $result['title'] }}</span>
+                                <img src="{{ $movie['poster_path'] }}" alt="{{ 'poster-' . $movie['slug'] }}" class="w-8">
+                                <span class="ml-4">{{ $movie['title'] }}</span>
                             </a>
                         </li>
 

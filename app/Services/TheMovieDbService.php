@@ -24,7 +24,7 @@ class TheMovieDbService
     /**
      * Retrieve the list of popular movies on TMDB
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
@@ -36,7 +36,7 @@ class TheMovieDbService
     /**
      * Retrieve the list of "playing now" movies on TMDB
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
@@ -48,7 +48,7 @@ class TheMovieDbService
     /**
      * Retrieve the list of movie genres on TMDB
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
@@ -62,7 +62,7 @@ class TheMovieDbService
      *
      * @param string $movie The movie id
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
@@ -78,7 +78,7 @@ class TheMovieDbService
      *
      * @param string $query
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
@@ -95,7 +95,7 @@ class TheMovieDbService
      * @param string $path
      * @param array|null $options
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
      * @throws \Illuminate\Http\Client\RequestException
      */

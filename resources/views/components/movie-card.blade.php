@@ -1,7 +1,7 @@
 <div class="mt-8">
     <a id="{{ $movie['id'] }}" href="{{ route('movies.show', $movie['id']) }}">
-        <img src="{{ 'https://image.tmdb.org/t/p/w500' . $movie['poster_path'] }}"
-            alt="{{ 'poster-' . Str::slug($movie['title']) }}"
+        <img src="{{ $movie['poster_url'] }}"
+            alt="{{ 'poster-' . $movie['slug'] }}"
             class="hover:opacity-75 transition ease-in-out duration-150">
     </a>
 
@@ -15,12 +15,12 @@
                         data-name="star" />
                 </g>
             </svg>
-            <span class="ml-1">{{ $movie['vote_average'] * 10 }}%</span>
+            <span class="ml-1">{{ $movie['vote_average'] }}</span>
             <span class="mx-2">|</span>
-            <span>{{ Carbon\Carbon::parse($movie['release_date'])->format('M d, Y') }}</span>
+            <span>{{ $movie['release_date'] }}</span>
         </div>
         <div class="text-gray-400 text-sm">
-            <span>{{ collect($genres)->whereIn('id', $movie['genre_ids'])->pluck('name')->implode(', ') }}</span>
+            <span>{{ $movie['genres'] }}</span>
         </div>
     </div>
 </div>
