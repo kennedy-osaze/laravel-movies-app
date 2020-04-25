@@ -39,7 +39,7 @@ class SingleMovieViewModel extends ViewModel
     {
         return collect($this->movie['credits']['cast'])->take(5)->map(function ($cast) {
             return [
-                'id' => $cast['cast_id'],
+                'id' => $cast['id'],
                 'profile_url' => isset($cast['profile_path'])
                     ? 'https://image.tmdb.org/t/p/w300/' . ltrim($cast['profile_path'], '/')
                     : 'https://via.placeholder.com/300x450',

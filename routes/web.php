@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\ActorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,5 +17,10 @@ use App\Http\Controllers\MovieController;
 
 Route::get('/', [MovieController::class, 'index'])
     ->name('movies.index');
-Route::get('movies/{id}', [MovieController::class, 'show'])
+Route::get('movies/{movieId}', [MovieController::class, 'show'])
     ->name('movies.show');
+
+Route::get('actors', [ActorController::class, 'index'])
+    ->name('actors.index');
+Route::get('actors/{actorId}', [ActorController::class, 'show'])
+    ->name('actors.show');

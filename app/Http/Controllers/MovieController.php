@@ -25,11 +25,10 @@ class MovieController extends Controller
         ));
     }
 
-    public function show(string $id)
+    public function show(string $movieId)
     {
-        return view(
-            'movies.show',
-            new SingleMovieViewModel($this->movieDb->getMovieDetails($id))
-        );
+        return view('movies.show', new SingleMovieViewModel(
+            $this->movieDb->getMovieDetails($movieId)
+        ));
     }
 }
