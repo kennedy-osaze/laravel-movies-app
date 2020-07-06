@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\ConnectionException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
@@ -183,6 +184,10 @@ class TheMovieDbService
             $response = $this->client->get($path, $options);
 
             return $response->json();
+        } catch (ConnectionException $e) {
+            throw new ServiceUnavailableHttpException(
+                null, 'Please check your network and try again.'
+            );
         } catch (RequestException $e) {
             $this->handleException($e);
         }
