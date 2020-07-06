@@ -1,12 +1,12 @@
 <div class="mt-8">
-    <a id="{{ $movie['id'] }}" href="{{ route('movies.show', $movie['id']) }}">
-        <img src="{{ $movie['poster_url'] }}"
-            alt="{{ 'poster-' . $movie['slug'] }}"
+    <a id="{{ $show['id'] }}" href="{{ route('tv-shows.show', $show['id']) }}">
+        <img src="{{ $show['poster_url'] }}"
+            alt="{{ 'poster-' . $show['slug'] }}"
             class="hover:opacity-75 transition ease-in-out duration-150">
     </a>
 
     <div class="mt-2">
-        <a href="{{ route('movies.show', $movie['id']) }}" class="text-lg mt-2 hover:text-gray-300">{{ $movie['title'] }}</a>
+        <a href="{{ route('tv-shows.show', $show['id']) }}" class="text-lg mt-2 hover:text-gray-300">{{ $show['name'] }}</a>
         <div class="flex items-center text-gray-400 text-sm mt-1">
             <svg class="fill-current text-orange-500 w-4" viewBox="0 0 24 24">
                 <g data-name="Layer 2">
@@ -15,12 +15,12 @@
                         data-name="star" />
                 </g>
             </svg>
-            <span class="ml-1">{{ $movie['vote_average'] }}</span>
+            <span class="ml-1">{{ $show['vote_average'] }}</span>
             <span class="mx-2">|</span>
-            <span>{{ $movie['release_date'] }}</span>
+            <span>{{ $show['first_air_date'] }}</span>
         </div>
         <div class="text-gray-400 text-sm">
-            <span>{{ $movie['genres'] }}</span>
+            <span>{{ $show['genres'] }}</span>
         </div>
     </div>
 </div>

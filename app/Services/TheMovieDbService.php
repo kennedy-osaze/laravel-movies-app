@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\ConnectionException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
@@ -24,9 +25,9 @@ class TheMovieDbService
     /**
      * Retrieve the list of popular movies on TMDB
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getPopularMovies()
     {
@@ -36,9 +37,9 @@ class TheMovieDbService
     /**
      * Retrieve the list of "playing now" movies on TMDB
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getPlayingNowMovies()
     {
@@ -48,27 +49,121 @@ class TheMovieDbService
     /**
      * Retrieve the list of movie genres on TMDB
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function getGenres()
+    public function getMovieGenres()
     {
         return $this->makeGetRequest('genre/movie/list');
     }
 
     /**
-     * Make a GET request to TMDB
+     * Gets the details of a single movie
      *
-     * @param string $movie The movie id
+     * @param string $movieId The movie id
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function getMovieDetails(string $movie)
+    public function getMovieDetails(string $movieId)
     {
-        return $this->makeGetRequest("movie/{$movie}", [
+        return $this->makeGetRequest("movie/{$movieId}", [
+            'append_to_response' => 'credits,videos,images'
+        ]);
+    }
+
+    /**
+     * Search the TMDB for a particularq uery movie
+     *
+     * @param string $query
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function searchMovie(string $query)
+    {
+        return $this->makeGetRequest('search/movie', compact('query'));
+    }
+
+    /**
+     * Retrieve the list of popular actors on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getPopularActors(int $page = 1)
+    {
+        return $this->makeGetRequest('person/popular', compact('page'));
+    }
+
+    /**
+     * Gets the details of a single actor
+     *
+     * @param string $actorId The actor id
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getActorDetails(string $actorId)
+    {
+        return $this->makeGetRequest("person/{$actorId}", [
+            'append_to_response' => 'external_ids,combined_credits'
+        ]);
+    }
+
+    /**
+     * Retrieve the list of popular TV shows on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getPopularTvShows()
+    {
+        return $this->makeGetRequest('tv/popular');
+    }
+
+    /**
+     * Retrieve the list of top rated TV shows on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTopRatedTvShows()
+    {
+        return $this->makeGetRequest('tv/top_rated');
+    }
+
+    /**
+     * Retrieve the list of TV show genres on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTvGenres()
+    {
+        return $this->makeGetRequest('genre/tv/list');
+    }
+
+    /**
+     * Gets the details of a Tv show
+     *
+     * @param string $showId The actor id
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTvShowDetails(string $showId)
+    {
+        return $this->makeGetRequest("tv/{$showId}", [
             'append_to_response' => 'credits,videos,images'
         ]);
     }
@@ -79,9 +174,9 @@ class TheMovieDbService
      * @param string $path
      * @param array|null $options
      *
-     * @return \Illuminate\Http\Client\Response
+     * @return array
      *
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     private function makeGetRequest(string $path, array $options = null)
     {
@@ -89,6 +184,10 @@ class TheMovieDbService
             $response = $this->client->get($path, $options);
 
             return $response->json();
+        } catch (ConnectionException $e) {
+            throw new ServiceUnavailableHttpException(
+                null, 'Please check your network and try again.'
+            );
         } catch (RequestException $e) {
             $this->handleException($e);
         }
@@ -101,14 +200,14 @@ class TheMovieDbService
      *
      * @return void
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException|Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     private function handleException(RequestException $exception)
     {
         $response = $exception->response;
 
-        if ($response->status() === 404) {
-            throw new NotFoundHttpException();
+        if (in_array($status = $response->status(), [404, 422])) {
+            throw new NotFoundHttpException(null, $exception, $status);
         }
 
         Log::alert(
@@ -116,6 +215,6 @@ class TheMovieDbService
             $response->json()
         );
 
-        throw new ServiceUnavailableHttpException();
+        throw new ServiceUnavailableHttpException(null, $exception->getMessage(), $exception);
     }
 }

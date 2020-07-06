@@ -35,14 +35,11 @@ class AppServiceProvider extends ServiceProvider
      */
     private function registerTheMovieDbService()
     {
-        $this->app->bind(
-            TheMovieDbService::class,
-            function ($app) {
-                return new TheMovieDbService(
-                    $app->make(Factory::class),
-                    config('services.tmdb', [])
-                );
-            }
-        );
+        $this->app->singleton(TheMovieDbService::class, function ($app) {
+            return new TheMovieDbService(
+                $app->make(Factory::class),
+                config('services.tmdb', [])
+            );
+        });
     }
 }
