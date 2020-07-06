@@ -44,17 +44,17 @@ class SingleActorViewModel extends ViewModel
     public function popularMovies()
     {
         return collect($this->actor['combined_credits']['cast'])
-            ->where('media_type', 'movie')
             ->sortByDesc('popularity')
             ->take(5)
             ->map(function ($movie) {
                 return [
                     'id' => $movie['id'],
-                    'title' => $movie['title'],
-                    'slug' => Str::slug($movie['title']),
+                    'title' => $movie['title'] ?? $movie['name'] ?? 'Untitled',
+                    'slug' => Str::slug($movie['title'] ?? $movie['name'] ?? 'Untitled'),
                     'poster_url' => isset($movie['poster_path'])
                         ? 'https://image.tmdb.org/t/p/w185/' . ltrim($movie['poster_path'], '/')
                         : 'https://via.placeholder.com/185x278',
+                    'link' => route(($movie['media_type'] === 'movie' ? 'movies.show' : 'tv-shows.show'), $movie['id']),
                 ];
             })
             ->all();

@@ -52,7 +52,7 @@ class TheMovieDbService
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function getGenres()
+    public function getMovieGenres()
     {
         return $this->makeGetRequest('genre/movie/list');
     }
@@ -112,6 +112,58 @@ class TheMovieDbService
     {
         return $this->makeGetRequest("person/{$actorId}", [
             'append_to_response' => 'external_ids,combined_credits'
+        ]);
+    }
+
+    /**
+     * Retrieve the list of popular TV shows on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getPopularTvShows()
+    {
+        return $this->makeGetRequest('tv/popular');
+    }
+
+    /**
+     * Retrieve the list of top rated TV shows on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTopRatedTvShows()
+    {
+        return $this->makeGetRequest('tv/top_rated');
+    }
+
+    /**
+     * Retrieve the list of TV show genres on TMDB
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTvGenres()
+    {
+        return $this->makeGetRequest('genre/tv/list');
+    }
+
+    /**
+     * Gets the details of a Tv show
+     *
+     * @param string $showId The actor id
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTvShowDetails(string $showId)
+    {
+        return $this->makeGetRequest("tv/{$showId}", [
+            'append_to_response' => 'credits,videos,images'
         ]);
     }
 

@@ -14,7 +14,7 @@ class MovieController extends Controller
         return view('movies.index', new MoviesViewModel(
             Arr::get(TheMovieDbService::getPopularMovies(), 'results', []),
             Arr::get(TheMovieDbService::getPlayingNowMovies(), 'results', []),
-            Arr::get(TheMovieDbService::getGenres(), 'genres', []),
+            Arr::get(TheMovieDbService::getMovieGenres(), 'genres', []),
         ));
     }
 
